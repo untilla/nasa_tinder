@@ -1,21 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import * as Font from 'expo-font';
+import { AppLoading } from 'expo';
+import { Provider } from 'mobx-react';
+import AppStore from './app/store/AppStore';
+import AppRoot from './app/AppRoot';
 
-export default function App() {
+const stores: Record<string, any> = {
+  store: new AppStore(),
+};
+
+const App: React.FC = (): JSX.Element => {
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const loadResources = async (): Promise<any> => Promise.all([
+    Font.loadAsync({
+      'IBMPlexSans-Regular': require('./assets/fonts/IBMPlexSans-Regular.ttf'),
+      'IBMPlexSans-SemiBold': require('./assets/fonts/IBMPlexSans-SemiBold.ttf'),
+    }),
+  ]);
+
+  if (!loaded) {
+    return (
+      <AppLoading
+        startAsync={loadResources}
+        onFinish={(): void => setLoaded(true)}
+        onError={console.warn}
+      />
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider {...stores}>
+      <AppRoot/>
+    </Provider>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
