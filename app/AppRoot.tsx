@@ -6,7 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Tinder from './screens/Tinder';
 import { observer } from 'mobx-react';
 import { useStores } from './hooks/useStores';
-import LoaderOverlay from './components/LoaderOverlay';
 
 const Stack = createStackNavigator();
 
@@ -32,7 +31,6 @@ const AppRoot: React.FC = observer((): JSX.Element => {
               component={Tinder}
             />
           </Stack.Navigator>
-          {isLoading && (<LoaderOverlay/>)}
         </SafeAreaView>
       </NavigationContainer>
     </View>

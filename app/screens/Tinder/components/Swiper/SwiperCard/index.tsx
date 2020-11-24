@@ -41,14 +41,13 @@ const styles = StyleSheet.create<IStyle>({
     borderRadius: 8,
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    shadowColor: 'rgba(16, 32, 39, 0.16)',
+    shadowColor: 'rgba(16, 32, 39, 0.22)',
     shadowOffset: {
       width: 0,
       height: 12,
     },
     shadowRadius: 20,
     shadowOpacity: 1,
-    overflow: 'hidden',
   },
   picture: {
     width: 328,
@@ -82,6 +81,7 @@ const styles = StyleSheet.create<IStyle>({
     right: 0,
     top: 0,
     bottom: 0,
+    borderRadius: 8,
   },
 });
 

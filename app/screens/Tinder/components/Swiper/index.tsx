@@ -47,10 +47,12 @@ const Swiper = forwardRef<React.RefObject<React.FC> | any, ISwiperProps>(
           Animated.spring(position, {
             useNativeDriver: true,
             toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
+            speed: 40,
           }).start(() => {
+            onLike(cards[cardIndex]);
             position.setValue({ x: 0, y: 0 });
-            setCardIndex(prevIndex => prevIndex + 1);
             setEnableUndo(true);
+            setCardIndex(prevIndex => prevIndex + 1);
             scaleValue.setValue(0);
           });
         }
@@ -59,8 +61,8 @@ const Swiper = forwardRef<React.RefObject<React.FC> | any, ISwiperProps>(
           Animated.spring(position, {
             useNativeDriver: true,
             toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
+            speed: 40,
           }).start(() => {
-            onLike(cards[cardIndex]);
             position.setValue({ x: 0, y: 0 });
             setEnableUndo(true);
             setCardIndex(prevIndex => prevIndex + 1);
@@ -84,12 +86,12 @@ const Swiper = forwardRef<React.RefObject<React.FC> | any, ISwiperProps>(
     const rotate = useRef(position.x.interpolate({
       inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
       outputRange: ['-10deg', '0deg', '10deg'],
-      extrapolate: 'clamp',
+      // extrapolate: 'clamp',
     })).current;
 
     const handleUndo = useCallback((): void => {
       setEnableUndo(false);
-      if (lastCoords.x < 0) {
+      if (lastCoords.x > 120) {
         onUndoLastLike(cards[cardIndex - 1]);
       }
       setCardIndex(prevIndex => prevIndex - 1);

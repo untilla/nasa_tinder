@@ -4,11 +4,13 @@ import Swiper from './components/Swiper';
 import { observer } from 'mobx-react';
 import { useStores } from '../../hooks/useStores';
 import { INavigationProps } from '../../types/global';
+import LoaderOverlay from '../../components/LoaderOverlay';
 
 const Tinder: React.FC<INavigationProps> = observer(({ navigation }): JSX.Element => {
   const swiperRef = useRef<React.RefObject<React.FC> | any>();
-  const { store: { fetchPhotos, photoCards } } = useStores();
+  const { store: { fetchPhotos, photoCards, isLoading } } = useStores();
   const [undoEnabled, setUndoEnabled] = useState<boolean>(false);
+  const [likeEnabled, setLikeEnabled] = useState<boolean>(true);
   useLayoutEffect(() => navigation.setOptions({
     header: () => (
       <View style={styles.headerContainer}>
@@ -21,7 +23,10 @@ const Tinder: React.FC<INavigationProps> = observer(({ navigation }): JSX.Elemen
           <Text style={styles.title}>My Mars</Text>
         </View>
         <View style={styles.button}>
-          <Image source={require('./assets/images/heart.png')} style={styles.likePic}/>
+          <Image
+            source={likeEnabled ? require('./assets/images/heart.png') : require('./assets/images/heart_d.png')}
+            style={styles.likePic}
+          />
         </View>
       </View>
     ),
@@ -39,6 +44,8 @@ const Tinder: React.FC<INavigationProps> = observer(({ navigation }): JSX.Elemen
         onFinish={fetchPhotos}
         undoEnableCallback={setUndoEnabled}
       />
+      {isLoading && (<LoaderOverlay/>)}
+      <Text style={styles.tabText}>10 cards</Text>
     </View>
   );
 });
@@ -52,6 +59,7 @@ interface IStyle {
   title: TextStyle,
   titleContainer: TextStyle,
   undo: TextStyle,
+  tabText: TextStyle,
 }
 
 const styles = StyleSheet.create<IStyle>({
@@ -74,8 +82,10 @@ const styles = StyleSheet.create<IStyle>({
     alignItems: 'center',
   },
   likePic: {
-    width: 23,
-    height: 22,
+    width: 28,
+    height: 28,
+    alignSelf: 'flex-end',
+    marginRight: 24,
   },
   title: {
     fontSize: 20,
@@ -96,6 +106,14 @@ const styles = StyleSheet.create<IStyle>({
     letterSpacing: 0.25,
     color: '#EB5757',
     fontFamily: 'IBMPlexSans-Medium',
+    textAlign: 'center',
+  },
+  tabText: {
+    fontSize: 16,
+    lineHeight: 20,
+    letterSpacing: 0.75,
+    color: '#727C81',
+    fontFamily: 'IBMPlexSans-Regular',
     textAlign: 'center',
   },
 });
