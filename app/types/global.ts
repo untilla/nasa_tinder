@@ -21,3 +21,9 @@ export interface INasaPhoto {
   earth_date: string,
   rover: INasaPhotoRover,
 }
+
+export interface INavigationProps {
+  route?: any,
+  navigation?: any,
+}
+

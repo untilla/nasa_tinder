@@ -1,21 +1,26 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { StyleSheet, ViewStyle, View, Animated, PanResponder, Button } from 'react-native';
+import React, { useRef, useState, useCallback, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { StyleSheet, ViewStyle, View, Animated, PanResponder } from 'react-native';
 import { ISwiperProps } from './types';
 import SwiperCard from './SwiperCard';
 import { SCREEN_WIDTH } from '../../../../constants/globals';
 
-const Swiper: React.FC<ISwiperProps> =
+const Swiper = forwardRef<React.RefObject<React.FC> | any, ISwiperProps>(
   ({
      cards,
      onLike = () => {},
      onUndoLastLike= () => {},
      onFinish = () => {},
-   }): JSX.Element => {
-    const [undoEnabled, setEnableUndo] = useState<boolean>(false);
+     undoEnableCallback = () => {},
+   }, ref): JSX.Element => {
+    const [undoEnabled, enableUndo] = useState<boolean>(false);
     const [cardIndex, setCardIndex] = useState<number>(0);
     const [lastCoords, setLastCoords] = useState({ x: 0, y: 0});
     const scaleValue = useRef(new Animated.Value(0)).current;
     const position = useRef(new Animated.ValueXY()).current;
+    const setEnableUndo = useCallback((enable: boolean) => {
+      enableUndo(enable);
+      undoEnableCallback(enable);
+    }, [undoEnableCallback]);
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => true,
       onPanResponderMove: (evt, gestureState) => {
@@ -82,12 +87,6 @@ const Swiper: React.FC<ISwiperProps> =
       extrapolate: 'clamp',
     })).current;
 
-    useEffect(() => {
-      if (cards.length && cardIndex >= cards.length) {
-        onFinish();
-        setCardIndex(0);
-      }
-    }, [cardIndex, cards]);
     const handleUndo = useCallback((): void => {
       setEnableUndo(false);
       if (lastCoords.x < 0) {
@@ -110,6 +109,18 @@ const Swiper: React.FC<ISwiperProps> =
       ]).start();
     }, [setCardIndex, lastCoords, position, setEnableUndo, cardIndex]);
 
+    useImperativeHandle(ref, () => ({
+      undoHandler: () => handleUndo(),
+    }),[handleUndo]);
+
+    useEffect(() => {
+      if (cards.length && cardIndex >= cards.length) {
+        onFinish();
+        setCardIndex(0);
+        setEnableUndo(false);
+      }
+    }, [cardIndex, cards]);
+
     const rotateAndTranslate = {
       transform: [{
         rotate,
@@ -119,7 +130,7 @@ const Swiper: React.FC<ISwiperProps> =
     };
 
     return (
-      <View style={{ flex: 1, marginTop: 64 }}>
+      <View style={{ flex: 1, marginTop: 64 }} ref={ref}>
         <View style={styles.container}>
           {cards[cardIndex + 3] && (
             <Animated.View
@@ -205,10 +216,9 @@ const Swiper: React.FC<ISwiperProps> =
             </Animated.View>
           )}
         </View>
-        <Button title={'Undo'} onPress={handleUndo} disabled={!undoEnabled}/>
       </View>
     );
-  };
+  });
 
 interface IStyle {
   container: ViewStyle,

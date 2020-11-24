@@ -14,6 +14,7 @@ const App: React.FC = (): JSX.Element => {
   const loadResources = async (): Promise<any> => Promise.all([
     Font.loadAsync({
       'IBMPlexSans-Regular': require('./assets/fonts/IBMPlexSans-Regular.ttf'),
+      'IBMPlexSans-Medium': require('./assets/fonts/IBMPlexSans-Medium.ttf'),
       'IBMPlexSans-SemiBold': require('./assets/fonts/IBMPlexSans-SemiBold.ttf'),
     }),
   ]);

@@ -5,6 +5,7 @@ export interface ISwiperProps {
   onLike?: (card: INasaPhoto) => void,
   onUndoLastLike?: (card: INasaPhoto) => void,
   onFinish?: () => void,
+  undoEnableCallback?: (enabled: boolean) => void,
 }
 
 export const CARD_WIDTH = 328;
